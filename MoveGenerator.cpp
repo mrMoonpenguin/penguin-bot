@@ -1,0 +1,350 @@
+//
+// Created by hasbid on 28/11/22.
+//
+
+#include "Piece.hpp"
+#include "Board.hpp"
+#include "MoveGenerator.h"
+
+// macros for the files and ranks
+#define FILE_A 0x0101010101010101L
+#define FILE_B 0x0202020202020202L
+#define FILE_C 0x0404040404040404L
+#define FILE_D 0x0808080808080808L
+#define FILE_E 0x1010101010101010L
+#define FILE_F 0x2020202020202020L
+#define FILE_G 0x4040404040404040L
+#define FILE_H 0x8080808080808080L
+#define RANK_1 0x00000000000000FFL
+#define RANK_2 0x000000000000FF00L
+#define RANK_3 0x0000000000FF0000L
+#define RANK_4 0x00000000FF000000L
+#define RANK_5 0x000000FF00000000L
+#define RANK_6 0x0000FF0000000000L
+#define RANK_7 0x00FF000000000000L
+#define RANK_8 0xFF00000000000000L
+
+// general macros
+#define bit 1UL
+#define NBB 12
+#define NSQ 64
+
+using U64 = uint64_t;
+
+/*
+ * Generates all pseudo-legal King moves according to the given board state and from the given square.
+ *
+ * Parameters:
+ * - board: the board state
+ * - from: the square from which to generate moves
+ * - empty: a bitboard representing all empty squares
+ * - enemy: a bitboard representing all enemy pieces
+ * - allowCastling: whether to allow castling moves to be generated
+ */
+U64 MoveGenerator::kingMoves(const Board &board, const Square &square, const U64 &empty, const U64 &enemy, bool allowCastling) {
+    auto idx = square.index();
+    auto mask = bit << idx;
+    U64 moves = 0UL;
+
+    // REGULAR MOVES //
+    // new moves only get added if they stay within the board
+
+    // up
+    if (idx < 56)
+        moves |= mask << 8;
+
+    // down
+    if (idx > 7)
+        moves |= mask >> 8;
+
+    // left
+    if (idx % 8 != 0)
+        moves |= mask >> 1;
+
+    // right
+    if (idx % 8 != 7)
+        moves |= mask << 1;
+
+    // up-left
+    if (idx < 56 && idx % 8 != 0)
+        moves |= mask << 7;
+
+    // up-right
+    if (idx < 56 && idx % 8 != 7)
+        moves |= mask << 9;
+
+    // down-left
+    if (idx > 7 && idx % 8 != 0)
+        moves |= mask >> 9;
+
+    // down-right
+    if (idx > 7 && idx % 8 != 7)
+        moves |= mask >> 7;
+
+    // CASTLING MOVES //
+    if (allowCastling) {
+        // bitboard with all enemy controlled squares
+        // a king cannot castle if it is in check or if it passes through a square that is under attack
+        U64 enemyControlled = board.getEnemyControlledSquares(board.turn());
+
+        // different squares need to be checked depending on the color of the king
+        // all these long (unreadable) if statements check whether the king has castling rights and whether the squares
+        // it passes through are under attack
+        switch (board.turn()) {
+            case PieceColor::White:
+                if ((board.castlingRights() & CastlingRights::WhiteKingside) == CastlingRights::WhiteKingside &&
+                    (empty & 0x60) == 0x60 &&
+                    (enemyControlled & 0x70) == 0)
+                    moves |= 0x40;
+
+                if ((board.castlingRights() & CastlingRights::WhiteQueenside) == CastlingRights::WhiteQueenside &&
+                    (empty & 0xE) == 0xE &&
+                    (enemyControlled & 0x1C) == 0)
+                    moves |= 0x4;
+
+                break;
+            case PieceColor::Black:
+                if ((board.castlingRights() & CastlingRights::BlackKingside) == CastlingRights::BlackKingside &&
+                    (empty & 0x6000000000000000) == 0x6000000000000000 &&
+                    (enemyControlled & 0x7000000000000000) == 0)
+                    moves |= 0x4000000000000000;
+
+                if ((board.castlingRights() & CastlingRights::BlackQueenside) == CastlingRights::BlackQueenside &&
+                    (empty & 0xE00000000000000) == 0xE00000000000000 &&
+                    (enemyControlled & 0x1C00000000000000) == 0)
+                    moves |= 0x400000000000000;
+                break;
+        }
+    }
+
+    // return only those moves that land on either an empty square or an enemy square (i.e., not on a friendly square)
+    return moves & (empty | enemy);
+}
+
+/*
+ * Generates all pseudo-legal Queen moves from the given square.
+ *
+ * Parameters:
+ * - square: the square from which to generate moves
+ * - empty: a bitboard representing empty squares
+ * - enemy: a bitboard representing enemy pieces
+ */
+U64 MoveGenerator::queenMoves(const Square &square, const U64 &empty, const U64 &enemy) {
+    // a queen is a combination of a rook and a bishop
+    return rookMoves(square, empty, enemy) | bishopMoves(square, empty, enemy);
+}
+
+/*
+ * Generates all pseudo-legal Rook moves from the given square.
+ *
+ * Parameters:
+ * - square: the square from which to generate moves
+ * - empty: a bitboard representing empty squares
+ * - enemy: a bitboard representing enemy pieces
+ */
+U64 MoveGenerator::rookMoves(const Square &square, const U64 &empty, const U64 &enemy) {
+    U64 rookMoves = 0UL;
+    U64 rook = bit << square.index();
+    U64 rookMovesMask;
+    unsigned int rank = square.rank();
+    unsigned int file = square.file();
+
+    // moves are generated by shifting the rook in a certain direction until it hits a piece or the edge of the board
+
+    // up
+    uint8_t upMoves = 7 - rank;
+    rookMovesMask = rook << 8;
+    while (upMoves > 0 && rookMovesMask & empty) {
+        rookMoves |= rookMovesMask;
+        rookMovesMask <<= 8;
+        upMoves--;
+    }
+    rookMoves |= rookMovesMask & enemy & ~RANK_1;
+
+    // down
+    uint8_t downMoves = rank;
+    rookMovesMask = rook >> 8;
+    while (downMoves > 0 && rookMovesMask & empty) {
+        rookMoves |= rookMovesMask;
+        rookMovesMask >>= 8;
+        downMoves--;
+    }
+    rookMoves |= rookMovesMask & enemy & ~RANK_8;
+
+    // right
+    uint8_t rightMoves = 7 - file;
+    rookMovesMask = rook << 1;
+    while (rightMoves > 0 && rookMovesMask & empty) {
+        rookMoves |= rookMovesMask;
+        rookMovesMask <<= 1;
+        rightMoves--;
+    }
+    rookMoves |= rookMovesMask & enemy & ~FILE_A;
+
+    // left
+    uint8_t leftMoves = file;
+    rookMovesMask = rook >> 1;
+    while (leftMoves > 0 && rookMovesMask & empty) {
+        rookMoves |= rookMovesMask;
+        rookMovesMask >>= 1;
+        leftMoves--;
+    }
+    rookMoves |= rookMovesMask & enemy & ~FILE_H;
+
+    return rookMoves;
+}
+
+/*
+ * Generates all pseudo-legal Bishop moves from the given square.
+ *
+ * Parameters:
+ * - square: the square from which to generate moves
+ * - empty: a bitboard representing empty squares
+ * - enemy: a bitboard representing enemy pieces
+ */
+U64 MoveGenerator::bishopMoves(const Square &square, const U64 &empty, const U64 &enemy) {
+    U64 bishopMoves = 0UL;
+    U64 bishop = bit << square.index();
+    U64 bishopMovesMask;
+    unsigned int rank = square.rank();
+    unsigned int file = square.file();
+
+    // moves are generated by shifting the bishop in a certain direction until it hits a piece or the edge of the board
+
+    // up-left
+    uint8_t upLeftMoves = std::min(7 - rank, file);
+    bishopMovesMask = bishop << 7;
+    while (upLeftMoves > 0 && bishopMovesMask & empty) {
+        bishopMoves |= bishopMovesMask;
+        bishopMovesMask <<= 7;
+        upLeftMoves--;
+    }
+    bishopMoves |= bishopMovesMask & enemy & ~RANK_1 & ~FILE_H;
+
+    // up-right
+    uint8_t upRightMoves = std::min(7 - rank, 7 - file);
+    bishopMovesMask = bishop << 9;
+    while (upRightMoves > 0 && bishopMovesMask & empty) {
+        bishopMoves |= bishopMovesMask;
+        bishopMovesMask <<= 9;
+        upRightMoves--;
+    }
+    bishopMoves |= bishopMovesMask & enemy & ~RANK_1 & ~FILE_A;
+
+    // down-left
+    uint8_t downLeftMoves = std::min(rank, file);
+    bishopMovesMask = bishop >> 9;
+    while (downLeftMoves > 0 && bishopMovesMask & empty) {
+        bishopMoves |= bishopMovesMask;
+        bishopMovesMask >>= 9;
+        downLeftMoves--;
+    }
+    bishopMoves |= bishopMovesMask & enemy & ~RANK_8 & ~FILE_H;
+
+    // down-right
+    uint8_t downRightMoves = std::min(rank, 7 - file);
+    bishopMovesMask = bishop >> 7;
+    while (downRightMoves > 0 && bishopMovesMask & empty) {
+        bishopMoves |= bishopMovesMask;
+        bishopMovesMask >>= 7;
+        downRightMoves--;
+    }
+    bishopMoves |= bishopMovesMask & enemy & ~RANK_8 & ~FILE_A;
+
+    return bishopMoves;
+}
+
+/*
+ * Generates all pseudo-legal Knight moves from the given square.
+ *
+ * Source: https://www.chessprogramming.org/Knight_Pattern
+ *
+ * Parameters:
+ * - square: the square from which to generate moves
+ * - empty: a bitboard representing empty squares
+ * - enemy: a bitboard representing enemy pieces
+ */
+U64 MoveGenerator::knightMoves(const Square &square, const U64 &empty, const U64 &enemy) {
+    U64 knight = bit << square.index();
+    U64 l1 = (knight >> 1) & U64(0x7f7f7f7f7f7f7f7fL);
+    U64 l2 = (knight >> 2) & U64(0x3f3f3f3f3f3f3f3fL);
+    U64 r1 = (knight << 1) & U64(0xfefefefefefefefeL);
+    U64 r2 = (knight << 2) & U64(0xfcfcfcfcfcfcfcfcL);
+    U64 h1 = l1 | r1;
+    U64 h2 = l2 | r2;
+    return ((h1 << 16) | (h1 >> 16) | (h2 << 8) | (h2 >> 8)) & (empty | enemy);
+}
+
+/*
+ * Generates all pseudo-legal Pawn moves from the given square.
+ *
+ * Parameters:
+ * - square: the square from which to generate moves
+ * - empty: a bitboard representing empty squares
+ * - enemy: a bitboard representing enemy pieces
+ * - epsq: an optional en passant square
+ */
+U64 MoveGenerator::pawnMoves(const Square &square, const U64 &empty, const U64 &enemy, const PieceColor &turn, const std::optional<Square> &epsq) {
+    U64 moves = 0UL;
+    U64 mask = bit << square.index();
+
+    if (turn == PieceColor::White) {
+        // pawn moves
+        moves |= (mask << 8) & empty;
+        // pawn double moves
+        if (square.rank() == 1) {
+            moves |= (mask << 16) & empty & (empty << 8);
+        }
+        // pawn captures
+        if (square.file() > 0)
+            moves |= (mask << 7) & enemy & ~FILE_H;
+        if (square.file() < 7)
+            moves |= (mask << 9) & enemy & ~FILE_A;
+
+        // en passant
+        if (epsq) {
+            moves |= (mask << 7) & (bit << epsq->index());
+            moves |= (mask << 9) & (bit << epsq->index());
+        }
+    } else {
+        // pawn moves
+        moves |= (mask >> 8) & empty;
+        // pawn double moves
+        if (square.rank() == 6) {
+            moves |= (mask >> 16) & empty & (empty >> 8);
+        }
+        // pawn captures
+        if (square.file() > 0)
+            moves |= (mask >> 9) & enemy & ~FILE_H;
+        if (square.file() < 7)
+            moves |= (mask >> 7) & enemy & ~FILE_A;
+
+        // en passant
+        if (epsq) {
+            moves |= (mask >> 7) & (bit << epsq->index());
+            moves |= (mask >> 9) & (bit << epsq->index());
+        }
+    }
+
+    return moves;
+}
+
+U64 MoveGenerator::pawnAttacks(const Square &square, const PieceColor turn) {
+
+    U64 moves = 0UL;
+    U64 pawn = bit << square.index();
+
+    if (turn == PieceColor::White) {
+
+        moves |= (pawn << 9) & ~FILE_A;
+        moves |= (pawn << 7) & ~FILE_H;
+
+    } else {
+
+        moves |= (pawn >> 7) & ~FILE_A;
+        moves |= (pawn >> 9) & ~FILE_H;
+
+    }
+
+    return moves;
+}

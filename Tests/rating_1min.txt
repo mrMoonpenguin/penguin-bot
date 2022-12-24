@@ -1,0 +1,122 @@
+=== Round 1/20, current rating: 1500 (rd: 350) ===
+Running puzzle Mt6e5 with rating 1408... OK
+Running puzzle IIBYk with rating 1448... OK
+Running puzzle Q6Wnw with rating 1884... OK
+Running puzzle awsIW with rating 2037... OK
+Running puzzle vP9Pj with rating 2137... OK
+=== Round 2/20, current rating: 2216 (rd: 188) ===
+Running puzzle YfwLo with rating 1873... OK
+Running puzzle 9sjys with rating 2071... OK
+Running puzzle Ae0rc with rating 2255... FAIL
+Running puzzle Qst8f with rating 2412... FAIL
+Running puzzle 8SbVB with rating 2497... OK
+=== Round 3/20, current rating: 2272 (rd: 133) ===
+Running puzzle 2Lgs3 with rating 2121... OK
+Running puzzle XJhf0 with rating 2172... FAIL
+Running puzzle Qk9eP with rating 2209... OK
+Running puzzle 8RuI4 with rating 2299... OK
+Running puzzle rk2r6 with rating 2412... OK
+=== Round 4/20, current rating: 2351 (rd: 104) ===
+Running puzzle Z4Bnq with rating 2186... OK
+Running puzzle liDeQ with rating 2186... OK
+Running puzzle KZzUu with rating 2236... FAIL
+Running puzzle jNvQl with rating 2325... OK
+Running puzzle HPOvm with rating 2494... OK
+=== Round 5/20, current rating: 2398 (rd: 89) ===
+Running puzzle lX1RW with rating 2254... ^[[DOK
+Running puzzle v6TyL with rating 2274... FAIL
+Running puzzle 2TvmR with rating 2318... OK
+Running puzzle 6FcSh with rating 2346... OK
+Running puzzle pzKDa with rating 2508... FAIL
+=== Round 6/20, current rating: 2402 (rd: 79) ===
+Running puzzle J7rMc with rating 2272... OK
+Running puzzle pzvG6 with rating 2281... FAIL
+Running puzzle VoFHh with rating 2282... Loop <_UnixSelectorEventLoop running=False closed=True debug=False> that handles pid 134857 is closed
+FAIL
+Running puzzle QREKI with rating 2396... OK
+Running puzzle aGEh5 with rating 2514... FAIL
+=== Round 7/20, current rating: 2377 (rd: 72) ===
+Running puzzle cTgvs with rating 2313... FAIL
+Running puzzle 2YQn9 with rating 2369... FAIL
+Running puzzle 46vSB with rating 2392... FAIL
+Running puzzle EK9Mp with rating 2450... OK
+Running puzzle naZGw with rating 2488... OK
+=== Round 8/20, current rating: 2369 (rd: 67) ===
+Running puzzle FwgU7 with rating 2248... OK
+Running puzzle T5qMV with rating 2286... FAIL
+Running puzzle vzExl with rating 2325... FAIL
+Running puzzle WEeEt with rating 2344... OK
+Running puzzle 4UGrU with rating 2458... FAIL
+=== Round 9/20, current rating: 2353 (rd: 62) ===
+Running puzzle euJVu with rating 2231... OK
+Running puzzle 6pEiA with rating 2341... OK
+Running puzzle fTsgj with rating 2417... OK
+Running puzzle PAlV9 with rating 2461... FAIL
+Running puzzle SV858 with rating 2462... OK
+=== Round 10/20, current rating: 2386 (rd: 59) ===
+Running puzzle 6l81H with rating 2287... FAIL
+Running puzzle 5M1QI with rating 2357... FAIL
+Running puzzle Xv3xz with rating 2464... FAIL
+Running puzzle fl9ZR with rating 2468... FAIL
+Running puzzle GD506 with rating 2500... FAIL
+=== Round 11/20, current rating: 2345 (rd: 56) ===
+Running puzzle AjULh with rating 2233... FAIL
+Running puzzle vQP4R with rating 2332... OK
+Running puzzle 5R5C2 with rating 2363... OK
+Running puzzle yXZOj with rating 2366... OK
+Running puzzle shvqX with rating 2379... OK
+=== Round 12/20, current rating: 2369 (rd: 54) ===
+Running puzzle TJKAc with rating 2310... FAIL
+Running puzzle k1tyV with rating 2328... OK
+Running puzzle iHKtq with rating 2330... OK
+Running puzzle O7bi6 with rating 2444... FAIL
+Running puzzle jWT3m with rating 2455... FAIL
+=== Round 13/20, current rating: 2361 (rd: 52) ===
+Running puzzle Qr086 with rating 2270... OK
+Running puzzle uGN2O with rating 2295... OK
+Running puzzle R6ibT with rating 2302... OK
+Running puzzle 3dFmn with rating 2306... OK
+Running puzzle iFYUI with rating 2390... FAIL
+=== Round 14/20, current rating: 2378 (rd: 51) ===
+Running puzzle 8ywpk with rating 2293... OK
+Running puzzle PKxCl with rating 2295... FAIL
+Running puzzle N2wGo with rating 2306... OK
+Running puzzle spSRA with rating 2383... FAIL
+Running puzzle S9zEJ with rating 2415... FAIL
+=== Round 15/20, current rating: 2368 (rd: 49) ===
+Running puzzle bREga with rating 2291... FAIL
+Running puzzle Eddsv with rating 2334... OK
+Running puzzle hugE8 with rating 2338... FAIL
+Running puzzle JPg5H with rating 2385... OK
+Running puzzle ECp4F with rating 2391... OK
+=== Round 16/20, current rating: 2372 (rd: 48) ===
+Running puzzle ahSYh with rating 2302... OK
+Running puzzle VlbjV with rating 2340... OK
+Running puzzle Zm6zU with rating 2350... OK
+Running puzzle t9KNz with rating 2416... FAIL
+Running puzzle Ezptf with rating 2418... OK
+=== Round 17/20, current rating: 2390 (rd: 47) ===
+Running puzzle xAkgL with rating 2342... FAIL
+Running puzzle 8UVOC with rating 2452... FAIL
+Running puzzle ABLvD with rating 2455... OK
+Running puzzle XZJlt with rating 2472... FAIL
+Running puzzle 6LRrY with rating 2480... OK
+=== Round 18/20, current rating: 2388 (rd: 46) ===
+Running puzzle o27Ff with rating 2315... OK
+Running puzzle 3dfLr with rating 2364... OK
+Running puzzle elWbm with rating 2393... FAIL
+Running puzzle 718AQ with rating 2414... OK
+Running puzzle eGKUB with rating 2474... FAIL
+=== Round 19/20, current rating: 2394 (rd: 45) ===
+Running puzzle NvIy4 with rating 2346... FAIL
+Running puzzle sUWqw with rating 2361... OK
+Running puzzle vaaB6 with rating 2375... OK
+Running puzzle 920ZQ with rating 2384... OK
+Running puzzle 2zsOO with rating 2483... OK
+=== Round 20/20, current rating: 2411 (rd: 45) ===
+Running puzzle m4Xtg with rating 2329... OK
+Running puzzle V5AGS with rating 2369... OK
+Running puzzle CBdnB with rating 2370... FAIL
+Running puzzle wR4yv with rating 2391... FAIL
+Running puzzle WyM1r with rating 2474... OK
+Final rating: 2415 (rd: 44)
